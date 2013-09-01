@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"image/png"
 	"strconv"
+	"encoding/hex"
 )
 
 const (
@@ -87,6 +88,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "error reading mappings: %v\n", err)
 		os.Exit(1)
 	}
+
+	fmt.Println(hex.Dump(mappings.Data))
+	os.Exit(0)
 
 	image := Render(mappings, palette)
 	err = png.Encode(os.Stdout, image)

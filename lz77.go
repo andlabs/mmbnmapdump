@@ -54,7 +54,7 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 
 	data = make([]byte, 0, size)
 
-	for n := uint32(0); n < size; n++ {
+	for uint32(len(data)) < size {
 		var b byte
 
 		b, err = readbyte()
@@ -84,6 +84,10 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 			}
 			b <<= 1
 		}
+	}
+
+	if uint32(len(data)) != size {
+		return nil, fmt.Errorf("error: somehow we decompressed a larger blob than expected (expected size 0x%X, got 0x%X)", size, len(data))
 	}
 
 	return data, nil
