@@ -33,15 +33,6 @@ func RenderTile(mapping uint16, palette color.Palette) image.Image {
 	// TODO paletted?
 	tile := image.NewNRGBA(image.Rect(0, 0, 8, 8))
 
-	yoff := 0
-	if vflip {
-		yoff = 7
-	}
-	xoff := 0
-	if hflip {
-		xoff = 7
-	}
-
 	vp := uint32(tileno) * tileSize
 	paletteLine *= 16		// 16 colors per line
 
@@ -52,8 +43,30 @@ func RenderTile(mapping uint16, palette color.Palette) image.Image {
 			left := b & 0xF
 			right := (b & 0xF0) >> 4
 			// TODO access data directly to save time?
-			tile.Set(xoff - x, yoff - y, palette[paletteLine + uint16(left)])
-			tile.Set(xoff - (x + 1), yoff - y, palette[paletteLine + uint16(right)])
+			tile.Set(x, y, palette[paletteLine + uint16(left)])
+			tile.Set(x + 1, y, palette[paletteLine + uint16(right)])
+		}
+	}
+
+	// TODO there should be some optimization to make all this unnecessary...
+	if hflip {
+		for x := 0; x < 4; x++ {
+			for y := 0; y < 8; y++ {
+				c1 := tile.At(x, y)
+				c2 := tile.At(7 - x, y)
+				tile.Set(x, y, c2)
+				tile.Set(7 - x, y, c1)
+			}
+		}
+	}
+	if vflip {
+		for y := 0; y < 4; y++ {
+			for x := 0; x < 8; x++ {
+				c1 := tile.At(x, y)
+				c2 := tile.At(x, 7 - y)
+				tile.Set(x, y, c2)
+				tile.Set(x, 7 - y, c1)
+			}
 		}
 	}
 
