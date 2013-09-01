@@ -89,7 +89,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(hex.Dump(mappings.Data))
+	fmt.Println(hex.Dump(VRAM[:]))
 	os.Exit(0)
 
 	image := Render(mappings, palette)

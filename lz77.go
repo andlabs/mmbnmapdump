@@ -16,11 +16,11 @@ const (
 
 	// copy block spec
 	lzDispLeftShift = 0
-	lzDispLeftMask = 0xF << lzDispRightShift
+	lzDispLeftMask = 0xF << lzDispLeftShift
 	lznCopyShift = 4
 	lznCopyMask = 0xF << lznCopyShift
 	lzDispRightShift = 8
-	lzDispRightMask = 0xFF << lzDispLeftShift
+	lzDispRightMask = 0xFF << lzDispRightShift
 
 	// combines the two halves of the disp above
 	lzDispFinalShift = 8
@@ -87,7 +87,7 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 	}
 
 	if uint32(len(data)) != size {
-		return nil, fmt.Errorf("error: somehow we decompressed a larger blob than expected (expected size 0x%X, got 0x%X)", size, len(data))
+//		return nil, fmt.Errorf("error: somehow we decompressed a larger blob than expected (expected size 0x%X, got 0x%X)", size, len(data))
 	}
 
 	return data, nil
