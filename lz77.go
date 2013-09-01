@@ -86,9 +86,9 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 		}
 	}
 
-	if uint32(len(data)) != size {
+//	if uint32(len(data)) != size {
 //		return nil, fmt.Errorf("error: somehow we decompressed a larger blob than expected (expected size 0x%X, got 0x%X)", size, len(data))
-	}
+//	}
 
 	return data, nil
 }
