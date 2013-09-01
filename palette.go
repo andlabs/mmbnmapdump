@@ -8,7 +8,7 @@ import (
 )
 
 // palette format is simple
-// first longword is size of palette data in longwords
+// first longword is size of palette data in bytes
 // this is immediately followed by the palette itself
 
 type GBAColor uint16
@@ -45,7 +45,7 @@ func ReadPalette(r io.Reader) (p color.Palette, err error) {
 	if err != nil {
 		return nil, err		// TODO wrap with more text?
 	}
-	n <<= 1				// longwords -> words for color count
+	n >>= 1				// bytes -> words for color count
 	p = make(color.Palette, n)
 	for i := 0; i < n; i++ {
 		c, err := ReadGBAColor(r)
