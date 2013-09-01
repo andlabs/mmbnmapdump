@@ -48,6 +48,7 @@ func RenderTile(mapping uint16, palette color.Palette) image.Image {
 	for y := 0; y < 8; y++ {
 		for x := 0; x < 8; x += 2 {
 			b := VRAM[vp]
+			vp++
 			left := b & 0xF
 			right := (b & 0xF0) >> 4
 			// TODO access data directly to save time?
