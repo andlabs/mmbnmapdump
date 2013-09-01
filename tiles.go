@@ -16,27 +16,28 @@ func ReadTiles(r io.ReadSeeker) (err error) {
 	var base uint32
 
 	// get the start, since we need to take its offset
-	base, err = r.Seek(0, 1)
+	xbase, err := r.Seek(0, 1)
 	if err != nil {
 		return err			// TODO wrap potential error with more text?
 	}
+	base = uint32(xbase)
 
 	// read everything
-	err = binary.Read(r, binary.LitleEndian, &len)
+	err = binary.Read(r, binary.LittleEndian, &len)
 	if err != nil {
 		return err			// TODO wrap potential error with more text?
 	}
-	err = binary.Read(r, binary.LitleEndian, &srcoff)
+	err = binary.Read(r, binary.LittleEndian, &srcoff)
 	if err != nil {
 		return err			// TODO wrap potential error with more text?
 	}
-	err = binary.Read(r, binary.LitleEndian, &destoff)
+	err = binary.Read(r, binary.LittleEndian, &destoff)
 	if err != nil {
 		return err			// TODO wrap potential error with more text?
 	}
 
 	// go to the LZ77-compressed tile data
-	base, err = r.Seek(base + srcoff, 0)
+	_, err = r.Seek(int64(base + srcoff), 0)
 	if err != nil {
 		return err			// TODO wrap potential error with more text?
 	}

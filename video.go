@@ -19,26 +19,26 @@ const (
 	hflipShift = 10
 	hflipMask = 1 << hflipShift
 	vflipShift = 11
-	vflipMask = 1 << vflipMask
+	vflipMask = 1 << vflipShift
 	paletteLineShift = 12
 	paletteLineMask = 0xF << paletteLineShift
 )
 
-func RenderTile(mapping uint16, palette color.Palette) (tile image.Image) {
+func RenderTile(mapping uint16, palette color.Palette) image.Image {
 	tileno := (mapping & tilenoMask) >> tilenoShift
 	hflip := ((mapping & hflipMask) >> hflipShift) != 0
 	vflip := ((mapping & vflipMask) >> vflipShift) != 0
 	paletteLine := (mapping & paletteLineMask) >> paletteLineShift
 
 	// TODO paletted?
-	tile = image.NewNRGBA(image.Rect(0, 0, 8, 8))
+	tile := image.NewNRGBA(image.Rect(0, 0, 8, 8))
 
 	yoff := 0
-	if yflip {
+	if vflip {
 		yoff = 7
 	}
 	xoff := 0
-	if xflip {
+	if hflip {
 		xoff = 7
 	}
 

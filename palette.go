@@ -47,7 +47,7 @@ func ReadPalette(r io.Reader) (p color.Palette, err error) {
 	}
 	n >>= 1				// bytes -> words for color count
 	p = make(color.Palette, n)
-	for i := 0; i < n; i++ {
+	for i := uint32(0); i < n; i++ {
 		c, err := ReadGBAColor(r)
 		if err != nil {
 			return nil, err		// TODO wrap with more text?

@@ -7,11 +7,11 @@ import (
 	"image/draw"
 )
 
-func Render(m *Mappings, palette color.Palette) (img image.Image) {
-	width := uint32(m.Header[0]) * 8
-	height := uint32(m.Header[1]) * 8
+func Render(m *Mappings, palette color.Palette) image.Image {
+	width := int(uint32(m.Header[0]) * 8)
+	height := int(uint32(m.Header[1]) * 8)
 
-	img = image.NewNRGBA(image.Rect(0, 0, width, height))
+	img := image.NewNRGBA(image.Rect(0, 0, width, height))
 
 	mp := 0
 
