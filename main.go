@@ -9,15 +9,19 @@ import (
 	"strconv"
 )
 
+const (
+	ROMMask = 0x1FFFFFF
+)
+
 func main() {
 	if len(os.Args) != 3 {
 		fmt.Fprintf(os.Stderr, "usage: %s ROM tripletloc-hex\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	var tilespos, palettepos, mappingpos uint32
+	var tilespos, palettepos, mappingspos uint32
 
-	tripletpos, err := strconv.ParseUInt(os.Args[2], 16, 32)
+	tripletpos, err := strconv.ParseUint(os.Args[2], 16, 32)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "invalid headless hex number %q for triplet pos\n", os.Args[2])
 		os.Exit(1)
@@ -30,7 +34,7 @@ func main() {
 	}
 	defer f.Close()
 
-	_, err = f.Seek(tripletpos, 0)
+	_, err = f.Seek(int64(tripletpos), 0)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error seeking to triplet pos 0x%X: %v\n", tripletpos, err)
 		os.Exit(1)
@@ -51,7 +55,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = f.Seek(tilespos, 0)
+	_, err = f.Seek(int64(tilespos & ROMMask), 0)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error seeking to tiles pos 0x%X: %v\n", tilespos, err)
 		os.Exit(1)
@@ -62,23 +66,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = f.Seek(palettepos, 0)
+	_, err = f.Seek(int64(palettepos & ROMMask), 0)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error seeking to palette pos 0x%X: %v\n", palettepos, err)
 		os.Exit(1)
 	}
-	palette, err = ReadPalette(f)
+	palette, err := ReadPalette(f)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error reading palette: %v\n", err)
 		os.Exit(1)
 	}
 
-	_, err = f.Seek(mappingspos, 0)
+	_, err = f.Seek(int64(mappingspos & ROMMask), 0)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error seeking to mappings pos 0x%X: %v\n", mappingspos, err)
 		os.Exit(1)
 	}
-	mappings, err = ReadMappings(f)
+	mappings, err := ReadMappings(f)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error reading mappings: %v\n", err)
 		os.Exit(1)

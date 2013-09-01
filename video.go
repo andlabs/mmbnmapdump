@@ -21,7 +21,7 @@ const (
 	vflipShift = 11
 	vflipMask = 1 << vflipMask
 	paletteLineShift = 12
-	paletteLineMask = 0xF << paletteMask
+	paletteLineMask = 0xF << paletteLineShift
 )
 
 func RenderTile(mapping uint16, palette color.Palette) (tile image.Image) {
@@ -31,7 +31,7 @@ func RenderTile(mapping uint16, palette color.Palette) (tile image.Image) {
 	paletteLine := (mapping & paletteLineMask) >> paletteLineShift
 
 	// TODO paletted?
-	tile = image.NewNRGBA(image.Rect(0, 0, 8, 8)
+	tile = image.NewNRGBA(image.Rect(0, 0, 8, 8))
 
 	yoff := 0
 	if yflip {

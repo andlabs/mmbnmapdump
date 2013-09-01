@@ -49,7 +49,7 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 	size := (header & lzSizeMask) >> lzSizeShift
 
 	if format != 1 {
-		return nil, fmt.Error("error: invalid LZ77 data compression format (expected 1, got 0x%X)", format)
+		return nil, fmt.Errorf("error: invalid LZ77 data compression format (expected 1, got 0x%X)", format)
 	}
 
 	data = make([]byte, 0, size)
@@ -61,7 +61,7 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 		if err != nil {
 			return nil, err		// TODO wrap with more text?
 		}
-		for bits = 0; bits < 8; bits++ {
+		for bits := 0; bits < 8; bits++ {
 			if (b & 0x80) == 0 {	// copy next byte
 				c, err := readbyte()
 				if err != nil {
@@ -75,10 +75,11 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 				}
 				dispRight := (copyspec & lzDispRightMask) >> lzDispRightShift
 				dispLeft := (copyspec & lzDispLeftMask) >> lzDispLeftShift
-				disp := (dispLeft << lzDispFinalShift) | lzDispRight
+				disp := (dispLeft << lzDispFinalShift) | dispRight
 				nCopy := (copyspec & lznCopyMask) >> lznCopyShift
 				for i := uint16(0); i < nCopy + 3; i++ {
-					data = append(data, data[len(data) - 1 - disp - 1])
+					// TODO convert len(data) and disp to uint32?
+					data = append(data, data[len(data) - 1 - int(disp) - 1])
 				}
 			}
 			b >>= 1
