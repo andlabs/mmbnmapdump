@@ -15,15 +15,15 @@ const (
 	lzSizeMask = 0xFFFFFF << lzSizeShift
 
 	// copy block spec
-	lzDispRightShift = 0
-	lzDispRightMask = 0xF << lzDispRightShift
+	lzDispLeftShift = 0
+	lzDispLeftMask = 0xF << lzDispRightShift
 	lznCopyShift = 4
 	lznCopyMask = 0xF << lznCopyShift
-	lzDispLeftShift = 8
-	lzDispLeftMask = 0xFF << lzDispLeftShift
+	lzDispRightShift = 8
+	lzDispRightMask = 0xFF << lzDispLeftShift
 
 	// combines the two halves of the disp above
-	lzDispFinalShift = 4
+	lzDispFinalShift = 8
 )
 
 func LZ77Decomp(r io.Reader) (data []byte, err error) {
@@ -79,10 +79,10 @@ func LZ77Decomp(r io.Reader) (data []byte, err error) {
 				nCopy := (copyspec & lznCopyMask) >> lznCopyShift
 				for i := uint16(0); i < nCopy + 3; i++ {
 					// TODO convert len(data) and disp to uint32?
-					data = append(data, data[len(data) - 1 - int(disp) - 1])
+					data = append(data, data[len(data) - int(disp) - 1])
 				}
 			}
-			b >>= 1
+			b <<= 1
 		}
 	}
 
