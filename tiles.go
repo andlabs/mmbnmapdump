@@ -6,13 +6,17 @@ import (
 	"encoding/binary"
 )
 
-// the tile data structure is simple:
+// the tile data structure is simple: it's three consecutive sets of three longwords
 // first longword is the number of longwords to copy
-// second longword is offset FROM THE TOP OF THE WHOLE STRUCTURE (so from the address of that first longword)
+// second longword is offset FROM THE TOP OF THE WHOLE STRUCTURE (so from the address of that first longword of the first set)
 // third longword is the offset in VRAM to load to
 
 func ReadTiles(r io.ReadSeeker) (err error) {
-	var len, srcoff, destoff uint32
+	var tiles [3]struct {
+		Len		uint32
+		Srcoff	uint32
+		Destoff	uint32
+	}
 	var base uint32
 
 	// get the start, since we need to take its offset
@@ -23,33 +27,27 @@ func ReadTiles(r io.ReadSeeker) (err error) {
 	base = uint32(xbase)
 
 	// read everything
-	err = binary.Read(r, binary.LittleEndian, &len)
-	if err != nil {
-		return err			// TODO wrap potential error with more text?
-	}
-	err = binary.Read(r, binary.LittleEndian, &srcoff)
-	if err != nil {
-		return err			// TODO wrap potential error with more text?
-	}
-	err = binary.Read(r, binary.LittleEndian, &destoff)
+	err = binary.Read(r, binary.LittleEndian, &tiles)
 	if err != nil {
 		return err			// TODO wrap potential error with more text?
 	}
 
-	// go to the LZ77-compressed tile data
-	_, err = r.Seek(int64(base + srcoff), 0)
-	if err != nil {
-		return err			// TODO wrap potential error with more text?
-	}
+	for i := 0; i < 3; i++ {
+		// go to the LZ77-compressed tile data
+		_, err = r.Seek(int64(base + tiles[i].Srcoff), 0)
+		if err != nil {
+			return err			// TODO wrap potential error with more text?
+		}
 
-	u, err := LZ77Decomp(r)
-	if err != nil {
-		return err			// TODO wrap potential error with more text?
-	}
+		u, err := LZ77Decomp(r)
+		if err != nil {
+			return err			// TODO wrap potential error with more text?
+		}
 
-	len <<= 2				// longwords -> bytes
-	for i := uint32(0); i < len; i++ {
-		VRAM[destoff + i] = u[i]
+		tiles[i].Len <<= 2		// longwords -> bytes
+		for j := uint32(0); j < tiles[i].Len; j++ {
+			VRAM[tiles[i].Destoff + j] = u[j]
+		}
 	}
 
 	return nil
