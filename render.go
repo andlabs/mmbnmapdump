@@ -13,19 +13,28 @@ func Render(offsets [3]uint32, m *Mappings, palette color.Palette) image.Image {
 
 	img := image.NewNRGBA(image.Rect(0, 0, width, height))
 
-	mp := 0
+	mp := uint32(0)
 
-	for y := 0; y < height; y += 8 {
-		for x := 0; x < width; x += 8 {
-			var md uint16
+	for i := 0; i < 3; i++ {
+		i = 2
+		dataoff := uint32(m.Header[i * 4]) |
+			(uint32(m.Header[(i * 4) + 1]) << 8) |
+			(uint32(m.Header[(i * 4) + 2]) << 16) |
+			(uint32(m.Header[(i * 4) + 3]) << 24)
+		dataoff -= 0x10	// offset is stored relative to top of mappings; make it relative to top of m.Data instead
+println(dataoff,len(m.Data))
+		for y := 0; y < height; y += 8 {
+			for x := 0; x < width; x += 8 {
+				var md uint16
 
-			md = uint16(m.Data[mp])
-			md |= uint16(m.Data[mp + 1]) << 8
-			mp += 2
-			tile := RenderTile(offsets[1], md, palette)
-			draw.Draw(img,
-				image.Rect(x, y, x + 8, y + 8),
-				tile, image.ZP, draw.Over)
+				md = uint16(m.Data[dataoff + mp])
+				md |= uint16(m.Data[dataoff + mp + 1]) << 8
+				mp += 2
+				tile := RenderTile(offsets[i], md, palette)
+				draw.Draw(img,
+					image.Rect(x, y, x + 8, y + 8),
+					tile, image.ZP, draw.Over)
+			}
 		}
 	}
 
