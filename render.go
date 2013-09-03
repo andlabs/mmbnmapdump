@@ -7,7 +7,7 @@ import (
 	"image/draw"
 )
 
-func Render(m *Mappings, palette color.Palette) image.Image {
+func Render(offsets [3]uint32, m *Mappings, palette color.Palette) image.Image {
 	width := int(uint32(m.Header[0]) * 8)
 	height := int(uint32(m.Header[1]) * 8)
 
@@ -22,7 +22,7 @@ func Render(m *Mappings, palette color.Palette) image.Image {
 			md = uint16(m.Data[mp])
 			md |= uint16(m.Data[mp + 1]) << 8
 			mp += 2
-			tile := RenderTile(md, palette)
+			tile := RenderTile(offsets[1], md, palette)
 			draw.Draw(img,
 				image.Rect(x, y, x + 8, y + 8),
 				tile, image.ZP, draw.Over)

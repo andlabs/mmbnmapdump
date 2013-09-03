@@ -24,7 +24,9 @@ const (
 	paletteLineMask = 0xF << paletteLineShift
 )
 
-func RenderTile(mapping uint16, palette color.Palette) image.Image {
+func RenderTile(tileoffset uint32, mapping uint16, palette color.Palette) image.Image {
+	vram := VRAM[tileoffset:]
+
 	tileno := (mapping & tilenoMask) >> tilenoShift
 	hflip := ((mapping & hflipMask) >> hflipShift) != 0
 	vflip := ((mapping & vflipMask) >> vflipShift) != 0
@@ -38,7 +40,7 @@ func RenderTile(mapping uint16, palette color.Palette) image.Image {
 
 	for y := 0; y < 8; y++ {
 		for x := 0; x < 8; x += 2 {
-			b := VRAM[vp]
+			b := vram[vp]
 			vp++
 			left := b & 0xF
 			right := (b & 0xF0) >> 4
