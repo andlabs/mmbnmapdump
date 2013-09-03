@@ -60,7 +60,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "error seeking to tiles pos 0x%X: %v\n", tilespos, err)
 		os.Exit(1)
 	}
-	err = ReadTiles(f)
+	tileoffsets, err := ReadTiles(f)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error reading tiles: %v\n", err)
 		os.Exit(1)
@@ -88,7 +88,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	image := Render(mappings, palette)
+	image := Render(tileoffsets, mappings, palette)
 	err = png.Encode(os.Stdout, image)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error saving png: %v\n", err)
