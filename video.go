@@ -15,7 +15,7 @@ const (
 
 	// mapping bits
 	tilenoShift = 0
-	tilenoMask = 0x3F << tilenoShift
+	tilenoMask = 0x3FF << tilenoShift
 	hflipShift = 10
 	hflipMask = 1 << hflipShift
 	vflipShift = 11
