@@ -48,7 +48,7 @@ func ReadTiles(r io.ReadSeeker) (offsets [3]uint32, err error) {
 		for j := uint32(0); j < tiles[i].Len; j++ {
 			VRAM[tiles[i].Destoff + j] = u[j]
 		}
-		offsets[i] = tiles[i].Destoff
+		offsets[i] = tiles[i].Destoff & (1024 * 16)		// tile offsets are aligned to 16KB boundaries
 	}
 
 	return offsets, nil
