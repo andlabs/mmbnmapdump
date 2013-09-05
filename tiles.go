@@ -10,6 +10,7 @@ import (
 // first longword is the number of longwords to copy
 // second longword is offset FROM THE TOP OF THE WHOLE STRUCTURE (so from the address of that first longword of the first set)
 // third longword is the offset in VRAM to load to
+// each set of three longword corresponds to a layer
 
 func ReadTiles(r io.ReadSeeker) (offsets [3]uint32, err error) {
 	var tiles [3]struct {
